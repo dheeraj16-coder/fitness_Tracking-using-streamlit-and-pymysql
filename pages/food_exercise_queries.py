@@ -8,7 +8,7 @@ def connect_to_database():
         connection = pymysql.connect(
             host="localhost",
             user="root",
-            password="VeenaUG@28",
+            password="",
             database="fitness_tracking"
         )
         return connection
@@ -73,4 +73,4 @@ def get_exercise_info(exercise_id):
         finally:
             connection.close()
     return None
-# Rest of your code
+
