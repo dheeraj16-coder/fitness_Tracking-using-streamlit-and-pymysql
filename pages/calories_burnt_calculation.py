@@ -6,7 +6,7 @@ def calculate_total_calories_burned(workout_id):
         connection = pymysql.connect(
             host='localhost',
             user='root',
-            password='VeenaUG@28',
+            password='',
             database='fitness_tracking',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor  # Use a dictionary cursor
@@ -42,7 +42,7 @@ def insert_calories_burnt(workout_id, calories):
         connection = pymysql.connect(
             host='localhost',
             user='root',
-            password='VeenaUG@28',
+            password='',
             database='fitness_tracking',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor  # Use a dictionary cursor
@@ -64,7 +64,7 @@ def calculate_total_calories_consumed(meal_id):
         connection = pymysql.connect(
             host='localhost',
             user='root',
-            password='VeenaUG@28',
+            password='',
             database='fitness_tracking',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor  # Use a dictionary cursor
@@ -108,7 +108,7 @@ def insert_calories_consumed(meal_id,k):
         connection = pymysql.connect(
             host='localhost',
             user='root',
-            password='VeenaUG@28',
+            password='',
             database='fitness_tracking',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor  # Use a dictionary cursor
