@@ -8,7 +8,7 @@ def connect_to_database():
         connection = pymysql.connect(
             host="localhost",
             user="root",
-            password="VeenaUG@28",
+            password="",
             database="fitness_tracking"
         )
         return connection
