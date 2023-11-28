@@ -8,7 +8,7 @@ from pages.streamlit_login import login
 db_config = {
     "host": "localhost",
     "user": "root",
-    "password": "VeenaUG@28",
+    "password": "",
     "database": "fitness_tracking",
 }
 
