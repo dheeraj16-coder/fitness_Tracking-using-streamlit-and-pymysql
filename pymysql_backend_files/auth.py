@@ -3,7 +3,7 @@ import hashlib
 import os
 
 # Connect to the database
-conn = pymysql.connect(host='localhost', user='root', password='VeenaUG@28', database='fitness_tracking')
+conn = pymysql.connect(host='localhost', user='root', password='', database='fitness_tracking')
 
 def hash_password(password):
     salt = os.urandom(16)
