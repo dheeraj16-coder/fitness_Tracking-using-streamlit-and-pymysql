@@ -325,6 +325,7 @@ VALUES
   ('Plank', 8.0, 0.7);
 
 --procedure creation command for goal setting
+DELIMITER //
 
 CREATE PROCEDURE CalculateCaloriesTarget(
     IN p_user_id INT,
