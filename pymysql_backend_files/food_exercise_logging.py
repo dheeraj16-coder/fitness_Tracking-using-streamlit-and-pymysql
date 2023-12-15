@@ -14,7 +14,8 @@ def connect_to_database():
     except pymysql.Error as error:
         print("Error: {}".format(error))
         return None
-    
+
+#logging the exercises  
     
 def log_exercise(user_id, workout_type, time, date):
     connection = connect_to_database()  
