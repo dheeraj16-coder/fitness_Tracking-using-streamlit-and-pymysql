@@ -14,8 +14,8 @@ CREATE TABLE `users` (
 CREATE TABLE `exercise_log` (
   `workout_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `calories_burnt` int NOT NULL,
-  `time` datetime NOT NULL,
+  `calories_burnt` int NOT NULL default 0,
+  `time` varchar(255) NOT NULL,
   `date` date NOT NULL,
   `workout_type` varchar(255) NOT NULL,
   PRIMARY KEY (`workout_id`),
@@ -55,7 +55,7 @@ CREATE TABLE `exercise_log_exercise` (
 CREATE TABLE `goals` (
   `goal_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `calories_target` int NOT NULL,
+  `calories_target` int NOT NULL default 0,
   `goal_type` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `goals` (
 CREATE TABLE `meals` (
   `meal_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `calories_consumed` int NOT NULL,
+  `calories_consumed` int NOT NULL default 0,
   `time` datetime NOT NULL,
   `meal_type` varchar(255) NOT NULL,
   `date` date NOT NULL,
@@ -323,3 +323,133 @@ VALUES
   ('Squats', 8.0, 0.7),
   ('Lunges', 8.0, 0.7),
   ('Plank', 8.0, 0.7);
+
+--procedure creation command for goal setting
+DELIMITER //
+
+CREATE PROCEDURE CalculateCaloriesTarget(
+    IN p_user_id INT,
+    IN p_goal_type VARCHAR(255),
+    IN p_end_date DATE
+)
+BEGIN
+    -- Declare variables
+    DECLARE v_start_date DATE;
+    DECLARE v_calories_target INT;
+    DECLARE v_goal_exists INT DEFAULT 0;
+    DECLARE v_duration_factor DECIMAL(10, 2);
+
+    -- Set start_date to the current date
+    SET v_start_date = CURDATE();
+
+    -- Calculate calories_target based on user weight, activity level, and goal type
+    SELECT
+        CASE
+            WHEN p_goal_type = 'Weight Loss' THEN
+                CASE
+                    WHEN u.activity_level = 'sedentary' THEN u.weight * 8
+                    WHEN u.activity_level = 'medium active' THEN u.weight * 10
+                    WHEN u.activity_level = 'active' THEN u.weight * 12
+                    ELSE u.weight * 10  -- Default for unknown activity level
+                END
+            WHEN p_goal_type = 'Maintenance' THEN
+                CASE
+                    WHEN u.activity_level = 'sedentary' THEN u.weight * 10
+                    WHEN u.activity_level = 'medium active' THEN u.weight * 12
+                    WHEN u.activity_level = 'active' THEN u.weight * 14
+                    ELSE u.weight * 12  -- Default for unknown activity level
+                END
+            WHEN p_goal_type = 'Muscle Gain' THEN
+                CASE
+                    WHEN u.activity_level = 'sedentary' THEN u.weight * 12
+                    WHEN u.activity_level = 'medium active' THEN u.weight * 14
+                    WHEN u.activity_level = 'active' THEN u.weight * 16
+                    ELSE u.weight * 14  -- Default for unknown activity level
+                END
+            ELSE u.weight * 10  -- Default for unknown goal type
+        END INTO v_calories_target
+    FROM users u
+    WHERE u.user_id = p_user_id;
+
+    -- Check if a goal already exists for the user
+    SELECT COUNT(*) INTO v_goal_exists FROM goals WHERE user_id = p_user_id;
+
+    -- Calculate the duration factor based on the difference in days
+    SET v_duration_factor = DATEDIFF(p_end_date, v_start_date) / 30.44;  -- Assuming an average month length
+
+    -- Adjust calories_target based on duration factor
+    SET v_calories_target = v_calories_target * v_duration_factor;
+
+    -- If a goal exists, update it; otherwise, insert a new goal
+    IF v_goal_exists > 0 THEN
+        UPDATE goals
+        SET calories_target = v_calories_target,
+            goal_type = p_goal_type,
+            end_date = p_end_date,
+            updated_at = NOW()
+        WHERE user_id = p_user_id;
+    ELSE
+        INSERT INTO goals (user_id, calories_target, goal_type, start_date, end_date, created_at, updated_at)
+        VALUES (p_user_id, v_calories_target, p_goal_type, v_start_date, p_end_date, NOW(), NOW());
+    END IF;
+
+    -- Return the calculated calories_target
+    SELECT v_calories_target AS calories_target;
+END //
+
+DELIMITER ;
+
+--triggers creation for calories_consumed update
+
+DELIMITER //
+
+CREATE TRIGGER recalculate_calories
+AFTER UPDATE ON meal_log_food
+FOR EACH ROW
+BEGIN
+    DECLARE total_calories_consumed DECIMAL(10, 2);
+
+    -- Calculate total calories consumed for the meal
+    SELECT 
+        SUM((f.calories_per_Serving * mlf.servings_size) + (f.fat * 9 * mlf.servings_size) + 
+            (f.protein * 4 * mlf.servings_size) + (f.carbohydrates * 4 * mlf.servings_size))
+    INTO total_calories_consumed
+    FROM foods f
+    JOIN meal_log_food mlf ON f.food_id = mlf.food_id
+    WHERE mlf.meal_id = NEW.meal_id;
+
+    -- Update the total calories consumed for the meal
+    UPDATE meals
+    SET calories_consumed = total_calories_consumed
+    WHERE meal_id = NEW.meal_id;
+END;
+//
+
+DELIMITER ;
+
+--trigger for calories_burnt update
+
+DELIMITER //
+
+CREATE TRIGGER update_calories_burnt 
+AFTER UPDATE ON exercise_log_exercise
+FOR EACH ROW
+BEGIN
+  DECLARE total_calories_burned DECIMAL(10, 2);
+
+  -- Calculate the total calories burned for the workout
+  SELECT SUM(
+    (e.met_value * ele.duration) + (e.calories_burnt_per_minute * ele.duration)
+  )
+  INTO total_calories_burned
+  FROM exercise_log_exercise ele
+  JOIN exercises e ON ele.exercise_id = e.exercise_id
+  WHERE ele.workout_id = NEW.workout_id;
+
+  -- Update the calories_burnt field in the exercise_log table
+  UPDATE exercise_log
+  SET calories_burnt = total_calories_burned
+  WHERE workout_id = NEW.workout_id;
+END //
+
+DELIMITER ;
