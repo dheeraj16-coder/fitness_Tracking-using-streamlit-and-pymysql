@@ -1,3 +1,5 @@
+#register
+
 import streamlit as st
 from pages.auth import register_user, authenticate_user
 
