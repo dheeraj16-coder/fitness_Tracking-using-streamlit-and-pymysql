@@ -20,6 +20,7 @@ def main():
 
         # Query food data from the database (replace with your actual function)
         food_data = get_food_data()
+        print("this si food data",food_data)
         food_data_info = [(row[0], row[1]) for row in food_data]
         selected_food_info = st.selectbox("Choose a food:", [f"{food_id} - {name}" for food_id, name in food_data_info])
         selected_food_id = int(selected_food_info.split(" - ")[0])

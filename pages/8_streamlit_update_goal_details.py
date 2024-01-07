@@ -5,7 +5,7 @@ import pymysql
 db_config = {
     "host": "localhost",
     "user": "root",
-    "password": "",
+    "password": "VeenaUG@28",
     "database": "fitness_tracking",  # Change to your database name
 }
 

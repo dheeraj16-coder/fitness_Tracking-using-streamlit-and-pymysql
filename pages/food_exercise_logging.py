@@ -6,7 +6,7 @@ def connect_to_database():
         connection = pymysql.connect(
             host="localhost",
             user="root",
-            password="",
+            password="VeenaUG@28",
             database="fitness_tracking"
         )
         print("hi")
@@ -86,14 +86,14 @@ def log_foods(user_id, meal_type, time, date):
 def log_food_food(meal_id, food_id, servings):
     connection = connect_to_database()
     if connection:
-       try:
-          with connection.cursor() as cursor:
-             # Insert a new record in the exercise_log_exercise table
-              insert_query = "INSERT INTO meal_log_food (meal_id,food_id, servings_size) VALUES (%s,%s, %s)"
-              cursor.execute(insert_query, (meal_id,food_id, servings))
+        try:
+            with connection.cursor() as cursor:
+                # Insert a new record in the exercise_log_exercise table
+                insert_query = "INSERT INTO meal_log_food (meal_id,food_id, servings_size) VALUES (%s,%s, %s)"
+                cursor.execute(insert_query, (meal_id,food_id, servings))
               
-              connection.commit()
-       except Exception as e:
+                connection.commit()
+        except Exception as e:
           print(f"Error logging exercise details: {e}")
           return None
        

@@ -5,7 +5,7 @@ def delete_record(record_id):
     connection = pymysql.connect(
         host='localhost',
         user='root',
-        password='',
+        password='VeenaUG@28',
         database='fitness_tracking'
     )
 

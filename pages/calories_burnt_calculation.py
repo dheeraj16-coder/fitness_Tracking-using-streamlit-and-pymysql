@@ -6,7 +6,7 @@ def calculate_total_calories_burned(workout_id):
         connection = pymysql.connect(
             host='localhost',
             user='root',
-            password='',
+            password='VeenaUG@28',
             database='fitness_tracking',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor  # Use a dictionary cursor
