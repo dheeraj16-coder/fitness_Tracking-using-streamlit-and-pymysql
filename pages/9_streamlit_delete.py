@@ -19,8 +19,9 @@ def delete_record(record_id):
 
             # Clear cached user information
             if st.session_state.user == record_id:
-                print("clearing cache")
                 st.session_state.user = None
+                st.experimental_rerun()  # Force rerun to clear cache
+                st.success("Record deleted. Cache cleared.")
             
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
@@ -39,8 +40,11 @@ def main():
     # Button to trigger record deletion
     delete_button = st.button("Delete Record")
 
+    dummy_trigger = st.empty()
+
     if delete_button and confirmation:
         delete_record(record_id)
+        dummy_trigger.button("Dummy Button")
 
 
 if __name__ == "__main__":
