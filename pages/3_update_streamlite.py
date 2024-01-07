@@ -8,7 +8,7 @@ if 'user' not in st.session_state:
     st.session_state.user = None
 def main():
     st.title("User Profile")
-
+    print("user from",st.session_state.user)
     if st.session_state.user is None:
         # User Login
         username = st.text_input("Username")

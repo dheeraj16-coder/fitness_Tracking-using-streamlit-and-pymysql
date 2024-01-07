@@ -20,7 +20,7 @@ def check_user_exists(user_id):
         with conn.cursor() as cur:
             cur.execute("SELECT COUNT(*) FROM users WHERE user_id = %s", (user_id,))
             user_exists = cur.fetchone()[0]
-            print(user_exists)
+            #print(user_exists)
         return user_exists
     except Exception as e:
         print(f"Error: {e}")

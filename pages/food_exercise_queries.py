@@ -3,7 +3,7 @@ import pymysql
 
 # Connect to the MySQL database
 def connect_to_database():
-    print("hi in connection")
+    #print("hi in connection")
     try:
         # Replace the following with your MySQL server credentials
         connection = pymysql.connect(
@@ -12,7 +12,7 @@ def connect_to_database():
             password="VeenaUG@28",
             database="fitness_tracking"
         )
-        print("hi i am connected")
+        #print("hi i am connected")
         return connection
     except pymysql.Error as error:
         print("Error: {}".format(error))
@@ -21,7 +21,7 @@ def connect_to_database():
 # Function to get food data from the database
 def get_food_data():
     connection = connect_to_database()
-    print("hi")
+    #print("hi")
     if connection:
         try:
             with connection.cursor() as cursor:

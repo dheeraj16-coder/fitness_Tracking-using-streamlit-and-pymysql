@@ -9,7 +9,7 @@ def connect_to_database():
             password="VeenaUG@28",
             database="fitness_tracking"
         )
-        print("hi")
+        #print("hi")
         return connection
     except pymysql.Error as error:
         print("Error: {}".format(error))
@@ -19,11 +19,11 @@ def connect_to_database():
 def log_exercise(user_id, workout_type, time, date):
     connection = connect_to_database()  
     if connection:
-        print("hi")
+        #print("hi")
         try:
             with connection.cursor() as cursor:
                 # Insert a new exercise log entry, omitting workout_id and calories_burnt
-                print("hi")
+                #print("hi")
                 insert_query = "INSERT INTO exercise_log (user_id, workout_type, time, date) VALUES (%s, %s, %s, %s)"
                 cursor.execute(insert_query, (user_id, workout_type, time, date))
                 connection.commit()
