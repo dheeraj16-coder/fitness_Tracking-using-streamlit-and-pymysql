@@ -37,8 +37,11 @@ def main():
     confirmation = st.checkbox("I confirm that I want to delete this record")
 
     # Button to trigger record deletion
-    if st.button("Delete Record") and confirmation:
+    delete_button = st.button("Delete Record")
+
+    if delete_button and confirmation:
         delete_record(record_id)
+
 
 if __name__ == "__main__":
     main()
